@@ -1,0 +1,5 @@
+name: waypoint-api
+version: '${project.version}'
+main: lol.vedant.waypoint.api.WaypointAPI
+api-version: '1.19'
+depend: [ ProtocolLib ]

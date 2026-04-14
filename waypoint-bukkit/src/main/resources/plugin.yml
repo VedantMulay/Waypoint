@@ -1,0 +1,4 @@
+name: Waypoint
+version: '${project.version}'
+main: lol.vedant.waypoint.Waypoint
+api-version: '1.19'
