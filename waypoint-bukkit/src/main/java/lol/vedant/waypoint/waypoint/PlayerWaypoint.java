@@ -1,6 +1,8 @@
 package lol.vedant.waypoint.waypoint;
 
 import lol.vedant.waypoint.Waypoint;
+import lol.vedant.waypoint.api.event.PlayerWaypointReachEvent;
+import lol.vedant.waypoint.api.event.PlayerWaypointStartEvent;
 import lol.vedant.waypoint.api.hologram.Hologram;
 import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypoint;
@@ -53,6 +55,8 @@ public class PlayerWaypoint implements PWaypoint {
 
         hologramManager.createHologram(player, hologram);
 
+        Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointStartEvent(player, this));
+
         task = Bukkit.getScheduler().runTaskTimer(
                 Bukkit.getPluginManager().getPlugins()[0],
                 () -> {
@@ -77,6 +81,8 @@ public class PlayerWaypoint implements PWaypoint {
     }
 
     public void stop() {
+        Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointReachEvent(player, this));
+
         if (task != null) {
             task.cancel();
             task = null;
