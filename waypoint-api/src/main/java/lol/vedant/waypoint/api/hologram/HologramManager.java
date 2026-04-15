@@ -4,17 +4,16 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@SuppressWarnings("ALL")
 public class HologramManager {
 
     private static final AtomicInteger ENTITY_ID_COUNTER = new AtomicInteger(100000);
@@ -51,13 +50,33 @@ public class HologramManager {
             PacketContainer meta = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
             meta.getIntegers().write(0, entityId);
 
-            WrappedDataWatcher watcher = new WrappedDataWatcher();
-            watcher.setObject(0, (byte) 0x20);
-            watcher.setObject(15, (byte) 0x10);
-            watcher.setObject(2, Optional.of(WrappedChatComponent.fromText(line).getHandle()));
-            watcher.setObject(3, true);
+            List<WrappedDataValue> values = new ArrayList<>();
 
-            meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+            values.add(new WrappedDataValue(
+                    0,
+                    WrappedDataWatcher.Registry.get(Byte.class),
+                    (byte) 0x20
+            ));
+
+            values.add(new WrappedDataValue(
+                    2,
+                    WrappedDataWatcher.Registry.getChatComponentSerializer(true),
+                    Optional.of(WrappedChatComponent.fromText(line).getHandle())
+            ));
+
+            values.add(new WrappedDataValue(
+                    3,
+                    WrappedDataWatcher.Registry.get(Boolean.class),
+                    true
+            ));
+
+            values.add(new WrappedDataValue(
+                    15,
+                    WrappedDataWatcher.Registry.get(Byte.class),
+                    (byte) 0x10
+            ));
+
+            meta.getDataValueCollectionModifier().write(0, values);
 
             protocolManager.sendServerPacket(player, meta);
 
