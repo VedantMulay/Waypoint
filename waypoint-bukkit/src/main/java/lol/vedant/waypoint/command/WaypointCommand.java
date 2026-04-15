@@ -25,7 +25,7 @@ public class WaypointCommand {
         int z = Integer.parseInt(args.getArgument(2));
 
         if (args.isSenderPlayer()) {
-            Player player = (Player) args.getSender();
+            Player player = args.getSender();
             PlayerWaypoint waypoint = new PlayerWaypoint(player,"Waypoint", new Location(player.getWorld(), x, y, z));
             waypoint.start();
             player.sendMessage("Waypoint started to " + waypoint.getLocation());
