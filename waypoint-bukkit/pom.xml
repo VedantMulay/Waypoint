@@ -40,7 +40,11 @@
                     <relocations>
                         <relocation>
                             <pattern>me.despical.commandframework</pattern>
-                            <shadedPattern>lol.vedant.waypoint.api.command</shadedPattern>
+                            <shadedPattern>lol.vedant.waypoint.libs.command</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>lol.vedant.waypoint.libs.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -94,6 +98,12 @@
             <artifactId>ProtocolLib</artifactId>
             <version>5.4.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.2.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>lol.vedant</groupId>

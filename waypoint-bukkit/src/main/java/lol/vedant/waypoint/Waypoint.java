@@ -9,12 +9,15 @@ import lol.vedant.waypoint.api.waypoint.PWaypointManager;
 import lol.vedant.waypoint.command.WaypointCommand;
 import lol.vedant.waypoint.waypoint.WaypointManager;
 import me.despical.commandframework.CommandFramework;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
     static Waypoint instance;
+    private final int pluginId = 30764; //bStats plugin id
+
     private ProtocolManager protocolManager ;
     private HologramManager hologramManager;
     private PWaypointManager waypointManager;
@@ -24,6 +27,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     @Override
     public void onEnable() {
         instance = this;
+        //Metrics metrics = new Metrics(this, pluginId);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
         hologramManager = new HologramManager(protocolManager);
