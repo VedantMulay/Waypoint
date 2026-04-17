@@ -26,7 +26,12 @@ public class WaypointCommand {
 
         if (args.isSenderPlayer()) {
             Player player = args.getSender();
-            PlayerWaypoint waypoint = new PlayerWaypoint(player,"Waypoint", new Location(player.getWorld(), x, y, z));
+            PlayerWaypoint waypoint = new PlayerWaypoint(
+                    "player_waypoint_" + player.getUniqueId().toString(),
+                    player,
+                    "Waypoint",
+                    new Location(player.getWorld(), x, y, z)
+            );
             waypoint.start();
             player.sendMessage("Waypoint started to " + waypoint.getLocation());
             return;
@@ -43,7 +48,12 @@ public class WaypointCommand {
             return;
         }
 
-        PlayerWaypoint waypoint = new PlayerWaypoint(target,"Waypoint", new Location(target.getWorld(), x, y, z));
+        PlayerWaypoint waypoint = new PlayerWaypoint(
+                "player_waypoint_" + target.getUniqueId(),
+                target,
+                "Waypoint",
+                new Location(target.getWorld(), x, y, z)
+        );
         waypoint.start();
         args.getSender().sendMessage("Waypoint started for " + target.getName());
     }

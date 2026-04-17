@@ -2,6 +2,7 @@ package lol.vedant.waypoint.api.hologram;
 
 import org.bukkit.Location;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,28 +10,30 @@ import java.util.UUID;
 
 public class Hologram {
 
-    private String identifier;
+    private final String identifier;
     private List<String> content;
     private Location location;
-    private double offSet;
+    private final double offSet;
 
-
+    // index (line number) -> LineData
     private final Map<Integer, LineData> lines = new HashMap<>();
 
     public Hologram(String identifier, Location location, List<String> content, double offSet) {
         this.identifier = identifier;
         this.location = location;
-        this.content = content;
+        this.content = new ArrayList<>(content); // defensive copy
         this.offSet = offSet;
     }
 
     public static class LineData {
         private final int entityId;
         private final UUID uuid;
+        private final int lineIndex;        // <-- This was missing!
 
-        public LineData(int entityId, UUID uuid) {
+        public LineData(int entityId, UUID uuid, int lineIndex) {
             this.entityId = entityId;
             this.uuid = uuid;
+            this.lineIndex = lineIndex;
         }
 
         public int getEntityId() {
@@ -40,14 +43,14 @@ public class Hologram {
         public UUID getUuid() {
             return uuid;
         }
+
+        public int getLineIndex() {
+            return lineIndex;
+        }
     }
 
     public void setLine(int index, int entityId, UUID uuid) {
-        lines.put(index, new LineData(entityId, uuid));
-    }
-
-    public LineData getLine(int index) {
-        return lines.get(index);
+        lines.put(index, new LineData(entityId, uuid, index));
     }
 
     public Map<Integer, LineData> getLines() {
@@ -67,7 +70,7 @@ public class Hologram {
     }
 
     public void setContent(List<String> content) {
-        this.content = content;
+        this.content = new ArrayList<>(content); // defensive copy
     }
 
     public Location getLocation() {
@@ -80,10 +83,6 @@ public class Hologram {
 
     public double getOffSet() {
         return offSet;
-    }
-
-    public void setOffSet(double offSet) {
-        this.offSet = offSet;
     }
 
     public Location getBaseLocation() {

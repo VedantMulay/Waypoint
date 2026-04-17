@@ -7,12 +7,9 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,28 +48,30 @@ public class HologramManager {
             protocolManager.sendServerPacket(player, spawnPacket);
 
             PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-
             metaPacket.getIntegers().write(0, entityId);
 
             List<WrappedDataValue> values = new ArrayList<>();
 
-            values.add(new WrappedDataValue(
-                    23,
-                    WrappedDataWatcher.Registry.getChatComponentSerializer(true),
-                    Optional.of(WrappedChatComponent.fromText(line).getHandle())));
+            values.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0));
 
+            values.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 1));
+
+            values.add(new WrappedDataValue(23, WrappedDataWatcher.Registry.getChatComponentSerializer(false), WrappedChatComponent.fromText(line).getHandle()));
+
+            values.add(new WrappedDataValue(25, WrappedDataWatcher.Registry.get(Integer.class), 0));
+
+            values.add(new WrappedDataValue(26, WrappedDataWatcher.Registry.get(Byte.class), (byte) -1));
+
+            values.add(new WrappedDataValue(27, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x02));
 
             metaPacket.getDataValueCollectionModifier().write(0, values);
-
             protocolManager.sendServerPacket(player, metaPacket);
 
             holo.setLine(index, entityId, uuid);
-
             index++;
         }
 
         holograms.put(holo.getIdentifier(), holo);
-
     }
 
 //    public void createHologram(Player player, Hologram hologram) {
@@ -162,6 +161,55 @@ public class HologramManager {
 
             index++;
         }
+    }
+
+    public void updateHologramText(Player player, Hologram hologram) {
+        List<String> newContent = hologram.getContent();
+
+        for (Hologram.LineData lineData : hologram.getLines().values()) {
+            int lineIndex = lineData.getLineIndex();
+
+            if (lineIndex < 0 || lineIndex >= newContent.size()) {
+                continue;
+            }
+
+            String newText = newContent.get(lineIndex);
+
+            PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            metaPacket.getIntegers().write(0, lineData.getEntityId());
+
+            List<WrappedDataValue> values = new ArrayList<>();
+
+            values.add(new WrappedDataValue(
+                    23,
+                    WrappedDataWatcher.Registry.getChatComponentSerializer(false),
+                    WrappedChatComponent.fromText(newText).getHandle()
+            ));
+
+            values.add(new WrappedDataValue(
+                    15,
+                    WrappedDataWatcher.Registry.get(Byte.class),
+                    (byte) 1
+            ));
+
+            metaPacket.getDataValueCollectionModifier().write(0, values);
+            protocolManager.sendServerPacket(player, metaPacket);
+        }
+    }
+
+    public void removeHologram(String identifier) {
+        Hologram holo = holograms.get(identifier);
+
+        // collect entity IDs
+        int[] entityIds = holo.getLines().values().stream()
+                .mapToInt(Hologram.LineData::getEntityId)
+                .toArray();
+
+        // send packet to remove the holo
+        PacketContainer destroyPacket = protocolManager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
+        destroyPacket.getIntegerArrays().write(0, entityIds);
+
+        holograms.remove(identifier);
     }
 
     private int getEntityId() {

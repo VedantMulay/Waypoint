@@ -27,13 +27,15 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     @Override
     public void onEnable() {
         instance = this;
-        //Metrics metrics = new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, pluginId);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
         hologramManager = new HologramManager(protocolManager);
-        waypointManager = new WaypointManager();
-        commandFramework = new CommandFramework(this);
 
+        waypointManager = new WaypointManager();
+        waypointManager.load();
+
+        commandFramework = new CommandFramework(this);
         commandFramework.registerCommands(new WaypointCommand());
     }
 

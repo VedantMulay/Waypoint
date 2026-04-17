@@ -5,7 +5,11 @@ import org.bukkit.entity.Player;
 
 public interface PWaypoint {
 
+    String getIdentifier();
+
     Player getPlayer();
+
+    String getPermission();
 
     Location getLocation();
 
