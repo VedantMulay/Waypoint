@@ -7,10 +7,11 @@ import lol.vedant.waypoint.api.database.Database;
 import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypointManager;
 import lol.vedant.waypoint.command.WaypointCommand;
+import lol.vedant.waypoint.config.ConfigManager;
 import lol.vedant.waypoint.waypoint.WaypointManager;
 import me.despical.commandframework.CommandFramework;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Waypoint extends JavaPlugin implements WaypointAPI {
@@ -18,6 +19,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     static Waypoint instance;
     private final int pluginId = 30764; //bStats plugin id
 
+    private ConfigManager configManager;
     private ProtocolManager protocolManager ;
     private HologramManager hologramManager;
     private PWaypointManager waypointManager;
@@ -27,6 +29,9 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     @Override
     public void onEnable() {
         instance = this;
+
+        configManager = new ConfigManager(this);
+
         Metrics metrics = new Metrics(this, pluginId);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
@@ -45,8 +50,8 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     }
 
     @Override
-    public YamlConfiguration getConfiguration() {
-        return null;
+    public FileConfiguration getConfiguration() {
+        return configManager.getConfig();
     }
 
     @Override
@@ -66,4 +71,5 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     public HologramManager getHologramManager() {
         return hologramManager;
     }
+
 }

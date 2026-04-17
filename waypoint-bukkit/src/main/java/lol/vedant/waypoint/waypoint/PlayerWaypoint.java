@@ -110,6 +110,8 @@ public class PlayerWaypoint implements PWaypoint {
 
                     if (distance < 2) {
                         stop();
+                        Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointReachEvent(player, this));
+
                         return;
                     }
 
