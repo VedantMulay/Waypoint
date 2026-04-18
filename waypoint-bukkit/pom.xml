@@ -46,6 +46,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>lol.vedant.waypoint.libs.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>lol.vedant.waypoint.libs.xseries</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -104,6 +108,11 @@
             <artifactId>bstats-bukkit</artifactId>
             <version>3.2.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>13.6.0</version>
         </dependency>
         <dependency>
             <groupId>lol.vedant</groupId>

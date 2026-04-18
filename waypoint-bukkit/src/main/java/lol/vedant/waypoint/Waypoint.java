@@ -8,6 +8,7 @@ import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypointManager;
 import lol.vedant.waypoint.command.WaypointCommand;
 import lol.vedant.waypoint.config.ConfigManager;
+import lol.vedant.waypoint.menu.ChatInputManager;
 import lol.vedant.waypoint.waypoint.WaypointManager;
 import me.despical.commandframework.CommandFramework;
 import org.bstats.bukkit.Metrics;
@@ -32,7 +33,11 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
         configManager = new ConfigManager(this);
 
-        Metrics metrics = new Metrics(this, pluginId);
+        if(getConfiguration().getBoolean("enable-bstats")) {
+            new Metrics(this, pluginId);
+        }
+
+        ChatInputManager.init(this);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
         hologramManager = new HologramManager(protocolManager);
