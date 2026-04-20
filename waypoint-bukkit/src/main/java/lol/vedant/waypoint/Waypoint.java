@@ -4,10 +4,13 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import lol.vedant.waypoint.api.WaypointAPI;
 import lol.vedant.waypoint.api.database.Database;
+import lol.vedant.waypoint.api.database.DatabaseSettings;
 import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypointManager;
 import lol.vedant.waypoint.command.WaypointCommand;
 import lol.vedant.waypoint.config.ConfigManager;
+import lol.vedant.waypoint.database.MySQL;
+import lol.vedant.waypoint.database.SQLite;
 import lol.vedant.waypoint.menu.ChatInputManager;
 import lol.vedant.waypoint.waypoint.WaypointManager;
 import me.despical.commandframework.CommandFramework;
@@ -20,6 +23,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
     static Waypoint instance;
     private final int pluginId = 30764; //bStats plugin id
 
+    private Database database;
     private ConfigManager configManager;
     private ProtocolManager protocolManager ;
     private HologramManager hologramManager;
@@ -37,6 +41,28 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
             new Metrics(this, pluginId);
         }
 
+        if(getConfiguration().getBoolean("database.enabled")) {
+            getLogger().info("Using MySQL Database");
+            database = new MySQL(
+                    new DatabaseSettings(
+                            getConfig().getString("database.host"),
+                            getConfig().getString("database.database"),
+                            getConfig().getInt("database.port"),
+                            getConfig().getString("database.user"),
+                            getConfig().getString("database.pass"),
+                            getConfig().getBoolean("database.ssl"),
+                            getConfig().getBoolean("database.verify-certificate"),
+                            getConfig().getInt("database.pool-size"),
+                            getConfig().getInt("database.max-lifetime")
+                    )
+            );
+            database.init();
+        } else {
+            getLogger().info("Using SQLite Database");
+            database = new SQLite();
+            database.init();
+        }
+
         ChatInputManager.init(this);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
@@ -51,7 +77,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        getLogger().info("Disabling Waypoint Plugin...");
     }
 
     @Override
@@ -61,7 +87,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
     @Override
     public Database getDatabase() {
-        return null;
+        return database;
     }
 
     @Override
