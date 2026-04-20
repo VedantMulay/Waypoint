@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -80,15 +82,16 @@ public class MySQL implements Database {
         this.utils = new MySQLUtils(dataSource);
 
         String player_waypoints = "CREATE TABLE IF NOT EXISTS player_waypoints (" +
-                "id INT PRIMARY KEY AUTO INCREMENT," +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "uuid VARCHAR(36)," +
                 "identifier VARCHAR(32)," +
                 "name VARCHAR(64)," +
                 "location VARCHAR(255)," +
-                "create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+                "create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "UNIQUE KEY unique_player_waypoint (uuid, identifier))";
 
         String global_waypoints = "CREATE TABLE IF NOT EXISTS global_waypoints(" +
-                "id INT PRIMARY KEY AUTO INCREMENT," +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "identifier VARCHAR(32)," +
                 "name VARCHAR(64)," +
                 "location VARCHAR(255)," +
@@ -96,8 +99,7 @@ public class MySQL implements Database {
                 "created_by VARCHAR(16))";
 
 
-        try {
-            Connection connection = dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
             connection.prepareStatement(player_waypoints).execute();
             connection.prepareStatement(global_waypoints).execute();
         } catch (SQLException e) {
@@ -108,7 +110,7 @@ public class MySQL implements Database {
 
     @Override
     public PWaypoint getPlayerWaypoint(UUID player, String identifier) {
-        String sql = "SELECT * FROM player_waypoints WHERE warp_id=?";
+        String sql = "SELECT * FROM player_waypoints WHERE identifier=? AND uuid=?";
         Player p = (Player) Bukkit.getOfflinePlayer(player);
         utils.query(sql, rs -> {
             try {
@@ -129,14 +131,35 @@ public class MySQL implements Database {
     }
 
     @Override
+    public List<PWaypoint> getAllPlayerWaypoints(UUID player) {
+        String sql = "SELECT * FROM player_waypoints WHERE uuid=?";
+        List<PWaypoint> waypoints = new ArrayList<>();
+        utils.query(sql, rs -> {
+            try {
+                while (rs.next()) {
+                    PlayerWaypoint wp = new PlayerWaypoint(
+                            rs.getString("identifier"),
+                            rs.getString("name"),
+                            Util.fromString(rs.getString("location"))
+                    );
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return List.of();
+        }, player.toString());
+        return List.of();
+    }
+
+    @Override
     public void createPlayerWaypoint(UUID player, PWaypoint waypoint) {
-        String sql = "INSERT INTO player_waypoints (identifier, name, location, uuid, ) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO player_waypoints (identifier, name, location, uuid) VALUES (?, ?, ?, ?)";
         utils.update(sql, waypoint.getIdentifier(), waypoint.getName(), Util.fromLocation(waypoint.getLocation()), player.toString());
     }
 
     @Override
     public void deletePlayerWaypoint(UUID player, String identifier) {
-        String sql = "DELETE FROM player_waypoints WHERE (identifier, uuid) IN (?, ?)";
+        String sql = "DELETE FROM player_waypoints WHERE identifier=? AND uuid=?";
         utils.update(sql, identifier, player.toString());
     }
 
