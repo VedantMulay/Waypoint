@@ -1,7 +1,5 @@
 package lol.vedant.waypoint;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import lol.vedant.waypoint.api.WaypointAPI;
 import lol.vedant.waypoint.api.database.Database;
 import lol.vedant.waypoint.api.database.DatabaseSettings;
@@ -11,7 +9,9 @@ import lol.vedant.waypoint.command.WaypointCommand;
 import lol.vedant.waypoint.config.ConfigManager;
 import lol.vedant.waypoint.database.MySQL;
 import lol.vedant.waypoint.database.SQLite;
+import lol.vedant.waypoint.listener.WaypointListener;
 import lol.vedant.waypoint.menu.ChatInputManager;
+import lol.vedant.waypoint.menu.MenuListener;
 import lol.vedant.waypoint.waypoint.WaypointManager;
 import me.despical.commandframework.CommandFramework;
 import org.bstats.bukkit.Metrics;
@@ -25,7 +25,6 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
     private Database database;
     private ConfigManager configManager;
-    private ProtocolManager protocolManager ;
     private HologramManager hologramManager;
     private PWaypointManager waypointManager;
     private CommandFramework commandFramework;
@@ -65,14 +64,16 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
         ChatInputManager.init(this);
 
-        protocolManager = ProtocolLibrary.getProtocolManager();
-        hologramManager = new HologramManager(this, protocolManager);
+        hologramManager = new HologramManager(this);
 
         waypointManager = new WaypointManager();
         waypointManager.load();
 
         commandFramework = new CommandFramework(this);
         commandFramework.registerCommands(new WaypointCommand());
+
+        getServer().getPluginManager().registerEvents(new WaypointListener(), this);
+        getServer().getPluginManager().registerEvents(new MenuListener(), this);
     }
 
     @Override

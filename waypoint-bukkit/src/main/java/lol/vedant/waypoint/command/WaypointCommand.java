@@ -2,6 +2,7 @@ package lol.vedant.waypoint.command;
 
 import lol.vedant.waypoint.Waypoint;
 import lol.vedant.waypoint.menu.MenuManager;
+import lol.vedant.waypoint.menu.menus.CreateWaypointMenu;
 import lol.vedant.waypoint.menu.menus.WaypointsMenu;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
 import me.despical.commandframework.CommandArguments;
@@ -15,7 +16,7 @@ public class WaypointCommand {
     Waypoint plugin = Waypoint.getInstance();
 
     @Command(
-            name = "waypoint",
+            name = "waypoint.start",
             senderType = Command.SenderType.BOTH
     )
     public void waypoint(CommandArguments args) {
@@ -37,8 +38,7 @@ public class WaypointCommand {
                     "Waypoint",
                     new Location(player.getWorld(), x, y, z)
             );
-            waypoint.start();
-            player.sendMessage("Waypoint started to " + waypoint.getLocation());
+            plugin.getWaypointManager().startWaypoint(player, waypoint);
             return;
         }
 
@@ -59,8 +59,18 @@ public class WaypointCommand {
                 "Waypoint",
                 new Location(target.getWorld(), x, y, z)
         );
-        waypoint.start();
-        args.getSender().sendMessage("Waypoint started for " + target.getName());
+        plugin.getWaypointManager().startWaypoint(target, waypoint);
+
+        args.getSender().sendMessage("&aWaypoint successfully started for &f" + target.getName());
+    }
+
+    @Command(
+            name="waypoint.create",
+            senderType = Command.SenderType.PLAYER
+    )
+    public void createWaypoint(CommandArguments args) {
+        Player player = args.getSender();
+        new CreateWaypointMenu("Create waypoint", 3).open(player);
     }
 
     @Command(
@@ -69,7 +79,6 @@ public class WaypointCommand {
     )
     public void waypoints(CommandArguments args) {
         Player player = args.getSender();
-        player.sendMessage("Opening menu....");
         new WaypointsMenu("Your Waypoints", 3, plugin.getDatabase().getAllPlayerWaypoints(player.getUniqueId())).open(player);
 
     }

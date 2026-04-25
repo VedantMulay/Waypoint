@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Menu {
 
@@ -14,6 +15,8 @@ public class Menu {
     private final int rows;
     private final String title;
     private final Map<Integer, MenuItem> items = new HashMap<>();
+    private boolean cancelDrag = true;
+    private Consumer<Player> closeAction;
 
     public Menu(String title, int rows) {
         this.title = title;
@@ -31,6 +34,16 @@ public class Menu {
         MenuManager.setOpenMenu(player, this);
     }
 
+    public void setCloseAction(Consumer<Player> closeAction) {
+        this.closeAction = closeAction;
+    }
+
+    public void handleClose(Player player) {
+        if (closeAction != null) {
+            closeAction.accept(player);
+        }
+    }
+
     public void handleClick(Player player, int slot, ClickType clickType) {
         MenuItem item = items.get(slot);
         if (item != null && item.getAction() != null) {
@@ -42,7 +55,13 @@ public class Menu {
         return inv.equals(this.inventory);
     }
 
+    public void setCancelDrag(boolean cancelDrag) {
+        this.cancelDrag = cancelDrag;
+    }
 
+    public boolean isCancelDrag() {
+        return cancelDrag;
+    }
 
 
 }
