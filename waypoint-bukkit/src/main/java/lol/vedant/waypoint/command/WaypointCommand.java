@@ -1,5 +1,8 @@
 package lol.vedant.waypoint.command;
 
+import lol.vedant.waypoint.Waypoint;
+import lol.vedant.waypoint.menu.MenuManager;
+import lol.vedant.waypoint.menu.menus.WaypointsMenu;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
 import me.despical.commandframework.CommandArguments;
 import me.despical.commandframework.annotations.Command;
@@ -8,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class WaypointCommand {
+
+    Waypoint plugin = Waypoint.getInstance();
 
     @Command(
             name = "waypoint",
@@ -56,5 +61,16 @@ public class WaypointCommand {
         );
         waypoint.start();
         args.getSender().sendMessage("Waypoint started for " + target.getName());
+    }
+
+    @Command(
+            name="waypoints",
+            senderType = Command.SenderType.PLAYER
+    )
+    public void waypoints(CommandArguments args) {
+        Player player = args.getSender();
+        player.sendMessage("Opening menu....");
+        new WaypointsMenu("Your Waypoints", 3, plugin.getDatabase().getAllPlayerWaypoints(player.getUniqueId())).open(player);
+
     }
 }

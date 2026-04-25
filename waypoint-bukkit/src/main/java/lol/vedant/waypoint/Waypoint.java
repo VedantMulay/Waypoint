@@ -66,7 +66,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
         ChatInputManager.init(this);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
-        hologramManager = new HologramManager(protocolManager);
+        hologramManager = new HologramManager(this, protocolManager);
 
         waypointManager = new WaypointManager();
         waypointManager.load();

@@ -83,7 +83,6 @@ public class WaypointManager implements PWaypointManager {
     @Override
     public void startWaypoint(Player player, PWaypoint waypoint) {
         activeWaypoints.put(player.getUniqueId(), waypoint);
-        activeWaypoints.get(player.getUniqueId()).start();
     }
 
     @Override
@@ -96,7 +95,6 @@ public class WaypointManager implements PWaypointManager {
 
     @Override
     public void stopWaypoint(Player player) {
-        activeWaypoints.get(player.getUniqueId()).stop();
         activeWaypoints.remove(player.getUniqueId());
     }
 }

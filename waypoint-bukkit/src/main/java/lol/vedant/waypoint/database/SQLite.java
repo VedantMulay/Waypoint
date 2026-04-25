@@ -51,6 +51,8 @@ public class SQLite implements Database {
         dataSource = new HikariDataSource(config);
         this.utils = new SQLiteUtils(dataSource);
 
+        utils.update(player_waypoints);
+        utils.update(global_waypoints);
 
     }
 

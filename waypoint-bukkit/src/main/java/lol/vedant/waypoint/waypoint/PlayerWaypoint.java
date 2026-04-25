@@ -18,7 +18,7 @@ public class PlayerWaypoint implements PWaypoint {
 
     private final String identifier;
     private final String name;
-    private final Player player;
+    private Player player;
     private final String yUp = "";
     private final String yDown = "";
     private String requiredPermission = null;
@@ -69,6 +69,10 @@ public class PlayerWaypoint implements PWaypoint {
         return player;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public String getPermission() {
         return requiredPermission;
     }
@@ -85,7 +89,7 @@ public class PlayerWaypoint implements PWaypoint {
         hologram = new Hologram(
                 "waypoint_" + player.getUniqueId(),
                 location,
-                Arrays.asList("§aWaypoint", "§cRemaining Blocks: §f" + 0),
+                Arrays.asList(name, "§cRemaining Blocks: §f" + Math.round(player.getLocation().distance(location))),
                 0
         );
 
@@ -115,7 +119,7 @@ public class PlayerWaypoint implements PWaypoint {
                         return;
                     }
 
-                    hologram.setContent(Arrays.asList("§aWaypoint", "§cRemaining Blocks: §f" + Math.round(distance)));
+                    hologram.getDisplay().setText(String.join("\n", Arrays.asList(name, "§cRemaining Blocks: §f" + Math.round(player.getLocation().distance(location)))));
                     hologramManager.updateHologramText(player, hologram);
 
                     Location newLoc = getHologramLocation();

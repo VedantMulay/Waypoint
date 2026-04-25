@@ -9,6 +9,8 @@ public interface PWaypoint {
 
     Player getPlayer();
 
+    void setPlayer(Player player);
+
     String getPermission();
 
     Location getLocation();

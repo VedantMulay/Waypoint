@@ -1,6 +1,7 @@
 package lol.vedant.waypoint.api.hologram;
 
 import org.bukkit.Location;
+import org.bukkit.entity.TextDisplay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ public class Hologram {
     private List<String> content;
     private Location location;
     private final double offSet;
+    private TextDisplay display;
 
     // index (line number) -> LineData
     private final Map<Integer, LineData> lines = new HashMap<>();
@@ -47,6 +49,14 @@ public class Hologram {
         public int getLineIndex() {
             return lineIndex;
         }
+    }
+
+    public TextDisplay getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(TextDisplay display) {
+        this.display = display;
     }
 
     public void setLine(int index, int entityId, UUID uuid) {
