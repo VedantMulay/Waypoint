@@ -6,6 +6,7 @@ import lol.vedant.waypoint.api.event.PlayerWaypointStartEvent;
 import lol.vedant.waypoint.api.hologram.Hologram;
 import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypoint;
+import lol.vedant.waypoint.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,10 +20,11 @@ public class PlayerWaypoint implements PWaypoint {
     private final String identifier;
     private final String name;
     private Player player;
-    private final String yUp = "";
-    private final String yDown = "";
+    private final String yUp = "&a(↑)";
+    private final String yDown = "&a(↓)";
     private String requiredPermission = null;
     private final Location location;
+    private String yIndicator = "";
 
 
     private Waypoint plugin = Waypoint.getInstance();
@@ -89,7 +91,7 @@ public class PlayerWaypoint implements PWaypoint {
         hologram = new Hologram(
                 "waypoint_" + player.getUniqueId(),
                 location,
-                Arrays.asList(name, "§cRemaining Blocks: §f" + Math.round(player.getLocation().distance(location))),
+                Util.cc(Arrays.asList(name, "&cRemaining Blocks: &f" + Math.round(player.getLocation().distance(location)))),
                 0
         );
 
@@ -99,8 +101,6 @@ public class PlayerWaypoint implements PWaypoint {
         hologramManager.createHologram(player, hologram);
 
         Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointStartEvent(player, this));
-
-        plugin.getWaypointManager().startWaypoint(player, this);
 
         task = Bukkit.getScheduler().runTaskTimer(
                 Bukkit.getPluginManager().getPlugins()[0],
@@ -112,6 +112,16 @@ public class PlayerWaypoint implements PWaypoint {
 
                     double distance = player.getLocation().distance(location);
 
+                    //show the Y arrow indicator
+                    if(distance < 100) {
+                        Location loc = player.getLocation();
+                        if(loc.getY() < location.getY()) {
+                            yIndicator = yUp;
+                        } else {
+                            yIndicator = yDown;
+                        }
+                    }
+
                     if (distance < 2) {
                         stop();
                         Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointReachEvent(player, this));
@@ -119,7 +129,7 @@ public class PlayerWaypoint implements PWaypoint {
                         return;
                     }
 
-                    hologram.getDisplay().setText(String.join("\n", Arrays.asList(name, "§cRemaining Blocks: §f" + Math.round(player.getLocation().distance(location)))));
+                    hologram.getDisplay().setText(String.join("\n", Util.cc(Arrays.asList(name + yIndicator, "&cRemaining Blocks: &f" + Math.round(player.getLocation().distance(location))))));
                     hologramManager.updateHologramText(player, hologram);
 
                     Location newLoc = getHologramLocation();
@@ -131,15 +141,13 @@ public class PlayerWaypoint implements PWaypoint {
     }
 
     public void stop() {
-        Bukkit.getServer().getPluginManager().callEvent(new PlayerWaypointReachEvent(player, this));
 
         if (task != null) {
             task.cancel();
             task = null;
         }
 
-        plugin.getWaypointManager().stopWaypoint(player);
-        hologramManager.removeHologram(identifier);
+        hologramManager.removeHologram(hologram);
 
     }
 
@@ -151,11 +159,9 @@ public class PlayerWaypoint implements PWaypoint {
                 .setY(0)
                 .normalize();
 
-        Location newLoc = playerLoc.clone()
-                .add(direction.multiply(7.5))
+
+        return playerLoc.clone()
+                .add(direction.multiply(10))
                 .add(0, 2.2, 0);
-
-
-        return newLoc;
     }
 }

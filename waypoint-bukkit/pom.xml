@@ -47,6 +47,10 @@
                             <shadedPattern>lol.vedant.waypoint.libs.bstats</shadedPattern>
                         </relocation>
                         <relocation>
+                            <pattern>net.kyori</pattern>
+                            <shadedPattern>lol.vedant.waypoint.libs.adventure</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>com.cryptomorin.xseries</pattern>
                             <shadedPattern>lol.vedant.waypoint.libs.xseries</shadedPattern>
                         </relocation>
@@ -96,12 +100,6 @@
             <groupId>com.github.Despical</groupId>
             <artifactId>CommandFramework</artifactId>
             <version>1.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.dmulloy2</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>5.4.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>

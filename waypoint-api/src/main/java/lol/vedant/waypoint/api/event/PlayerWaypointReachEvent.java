@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 
 public class PlayerWaypointReachEvent extends Event {
 
-    private final HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
     private final Player player;
     private final PWaypoint waypoint;
 
@@ -26,6 +26,10 @@ public class PlayerWaypointReachEvent extends Event {
 
     @Override
     public HandlerList getHandlers() {
+        return handlerList;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 }
