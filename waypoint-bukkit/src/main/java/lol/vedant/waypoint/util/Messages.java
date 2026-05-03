@@ -32,6 +32,10 @@ public class Messages {
      * @return the colored, substituted message string
      */
     public static String get(String key, String... replacements) {
+        if (replacements.length % 2 != 0) {
+            throw new IllegalArgumentException(
+                    "Messages.get() requires an even number of replacement arguments (placeholder, value pairs). Got: " + replacements.length);
+        }
         String prefix = Waypoint.getInstance().getConfiguration()
                 .getString("messages.prefix", "&8[&6Waypoint&8] &r");
         String message = Waypoint.getInstance().getConfiguration()

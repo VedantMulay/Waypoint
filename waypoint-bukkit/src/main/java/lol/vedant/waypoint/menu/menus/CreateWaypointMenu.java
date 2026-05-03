@@ -89,7 +89,7 @@ public class CreateWaypointMenu extends Menu {
                         .build(),
                 (player, clickType) -> {
                     if(clickType.isLeftClick()) {
-                        if (name.isEmpty()) {
+                        if (name == null || name.isEmpty()) {
                             player.sendMessage(Messages.get("name-required"));
                             return;
                         }
