@@ -27,9 +27,13 @@ public class CreateWaypointMenu extends Menu {
                             .name(Util.cc("&aSet waypoint name"))
                             .lore(Util.cc("&eClick to change"))
                             .build(),
+
                     (player, clickType) -> {
+                        player.closeInventory();
                         ChatInputManager.waitForInput(player, res -> {
                             this.name = res;
+                            open(player);
+                            XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
                         });
 
                     }
@@ -41,8 +45,10 @@ public class CreateWaypointMenu extends Menu {
                             .lore(Util.cc("&eClick to change"))
                             .build(),
                     (player, clickType) -> {
+                        player.closeInventory();
                         ChatInputManager.waitForInput(player, res -> {
                             this.name = res;
+                            open(player);
                         });
 
                     }
@@ -68,9 +74,9 @@ public class CreateWaypointMenu extends Menu {
                             .addLore(Util.cc("&eClick to set your current location"))
                             .build(),
                     (player, clickType) -> {
-                        player.closeInventory();
                         ChatInputManager.waitForInput(player, res -> {
-                            this.name = res;
+                            player.closeInventory();
+                            this.location = player.getLocation();
                             open(player);
                             XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
                         });

@@ -20,6 +20,8 @@ public interface Database {
 
     List<PWaypoint> getAllWaypoints();
 
+    void savePlayerWaypoint(PWaypoint waypoint);
+
     PWaypoint getWaypoint(String identifier);
 
     void createWaypoint(PWaypoint waypoint);

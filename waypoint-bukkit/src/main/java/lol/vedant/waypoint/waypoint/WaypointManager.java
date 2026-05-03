@@ -108,7 +108,7 @@ public class WaypointManager implements PWaypointManager {
         return activeWaypoints.containsKey(player.getUniqueId());
     }
 
-    @Override
+
     public PWaypoint getActiveWaypoint(Player player) {
         return activeWaypoints.get(player.getUniqueId());
     }

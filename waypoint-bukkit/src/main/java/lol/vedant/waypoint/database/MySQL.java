@@ -182,6 +182,12 @@ public class MySQL implements Database {
     }
 
     @Override
+    public void savePlayerWaypoint(PWaypoint waypoint) {
+        String sql = "UPDATE player_waypoints location=?, name=? WHERE uuid=? AND identifier=?";
+        utils.update(sql, Util.fromLocation(waypoint.getLocation()), waypoint.getName(), waypoint.getPlayer().getUniqueId().toString(), waypoint.getIdentifier());
+    }
+
+    @Override
     public PWaypoint getWaypoint(String identifier) {
         String sql = "SELECT * FROM global_waypoints WHERE identifier=?";
         return utils.query(sql, rs -> {

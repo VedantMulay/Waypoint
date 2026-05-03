@@ -18,7 +18,6 @@ public interface PWaypointManager {
 
     boolean hasActiveWaypoint(Player player);
 
-    PWaypoint getActiveWaypoint(Player player);
 
 
 
