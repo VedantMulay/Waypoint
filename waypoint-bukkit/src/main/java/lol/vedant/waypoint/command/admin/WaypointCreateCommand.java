@@ -3,6 +3,7 @@ package lol.vedant.waypoint.command.admin;
 import lol.vedant.waypoint.Waypoint;
 import lol.vedant.waypoint.api.waypoint.PWaypoint;
 import lol.vedant.waypoint.menu.menus.GlobalWaypointsMenu;
+import lol.vedant.waypoint.util.Messages;
 import lol.vedant.waypoint.util.Util;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
 import me.despical.commandframework.CommandArguments;
@@ -45,13 +46,13 @@ public class WaypointCreateCommand {
         }
 
         if (plugin.getDatabase().getWaypoint(id) != null) {
-            player.sendMessage(Util.cc("&cA global waypoint with ID &f" + id + " &calready exists!"));
+            player.sendMessage(Messages.get("global-waypoint-exists", "%id%", id));
             return;
         }
 
         Location loc = player.getLocation();
         plugin.getDatabase().createWaypoint(new PlayerWaypoint(id, name, loc));
-        player.sendMessage(Util.cc("&aGlobal waypoint &f" + name + " &7(&f" + id + "&7) &acreated at your location!"));
+        player.sendMessage(Messages.get("global-waypoint-created", "%name%", name, "%id%", id));
     }
 
     @Command(
@@ -67,12 +68,12 @@ public class WaypointCreateCommand {
 
         String id = args.getArgument(0);
         if (plugin.getDatabase().getWaypoint(id) == null) {
-            args.getSender().sendMessage(Util.cc("&cGlobal waypoint &f" + id + " &cnot found!"));
+            args.getSender().sendMessage(Messages.get("global-waypoint-not-found", "%id%", id));
             return;
         }
 
         plugin.getDatabase().deleteWaypoint(id);
-        args.getSender().sendMessage(Util.cc("&cGlobal waypoint &f" + id + " &cdeleted!"));
+        args.getSender().sendMessage(Messages.get("global-waypoint-deleted", "%id%", id));
     }
 
     @Command(
@@ -84,7 +85,7 @@ public class WaypointCreateCommand {
         List<PWaypoint> waypoints = plugin.getDatabase().getAllWaypoints();
 
         if (waypoints.isEmpty()) {
-            args.getSender().sendMessage(Util.cc("&7No global waypoints have been created yet."));
+            args.getSender().sendMessage(Messages.get("no-global-waypoints"));
             return;
         }
 
@@ -106,7 +107,7 @@ public class WaypointCreateCommand {
     )
     public void reloadWaypoints(CommandArguments args) {
         plugin.getWaypointManager().load();
-        args.getSender().sendMessage(Util.cc("&aWaypoints reloaded successfully!"));
+        args.getSender().sendMessage(Messages.get("waypoints-reloaded"));
     }
 }
 

@@ -5,6 +5,7 @@ import lol.vedant.waypoint.api.waypoint.PWaypoint;
 import lol.vedant.waypoint.menu.menus.CreateWaypointMenu;
 import lol.vedant.waypoint.menu.menus.GlobalWaypointsMenu;
 import lol.vedant.waypoint.menu.menus.WaypointsMenu;
+import lol.vedant.waypoint.util.Messages;
 import lol.vedant.waypoint.util.Util;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
 import me.despical.commandframework.CommandArguments;
@@ -44,6 +45,7 @@ public class WaypointCommand {
                         new Location(player.getWorld(), x, y, z)
                 );
                 plugin.getWaypointManager().startWaypoint(player, waypoint);
+                player.sendMessage(Messages.get("waypoint-started", "%name%", "Waypoint"));
                 return;
             }
 
@@ -54,7 +56,7 @@ public class WaypointCommand {
 
             Player target = Bukkit.getPlayer(args.getArgument(3));
             if (target == null) {
-                args.getSender().sendMessage(Util.cc("&cPlayer not found!"));
+                args.getSender().sendMessage(Messages.get("player-not-found", "%player%", args.getArgument(3)));
                 return;
             }
 
@@ -65,9 +67,9 @@ public class WaypointCommand {
                     new Location(target.getWorld(), x, y, z)
             );
             plugin.getWaypointManager().startWaypoint(target, waypoint);
-            args.getSender().sendMessage(Util.cc("&aWaypoint successfully started for &f" + target.getName()));
+            args.getSender().sendMessage(Messages.get("waypoint-started-for", "%player%", target.getName()));
         } catch (NumberFormatException e) {
-            args.getSender().sendMessage(Util.cc("&cInvalid coordinates! Please use numbers."));
+            args.getSender().sendMessage(Messages.get("invalid-coordinates"));
         }
     }
 
@@ -93,11 +95,11 @@ public class WaypointCommand {
         String identifier = args.getArgument(0);
         PWaypoint wp = plugin.getDatabase().getPlayerWaypoint(player.getUniqueId(), identifier);
         if (wp == null) {
-            player.sendMessage(Util.cc("&cWaypoint &f" + identifier + " &cnot found!"));
+            player.sendMessage(Messages.get("waypoint-not-found", "%id%", identifier));
             return;
         }
         plugin.getDatabase().deletePlayerWaypoint(player.getUniqueId(), identifier);
-        player.sendMessage(Util.cc("&aWaypoint &f" + identifier + " &adeleted!"));
+        player.sendMessage(Messages.get("waypoint-deleted", "%name%", identifier));
     }
 
     @Command(
@@ -108,9 +110,9 @@ public class WaypointCommand {
         Player player = args.getSender();
         if (plugin.getWaypointManager().hasActiveWaypoint(player)) {
             plugin.getWaypointManager().stopWaypoint(player);
-            player.sendMessage(Util.cc("&aYour active waypoint has been stopped."));
+            player.sendMessage(Messages.get("waypoint-stopped"));
         } else {
-            player.sendMessage(Util.cc("&cYou don't have an active waypoint."));
+            player.sendMessage(Messages.get("no-active-waypoint"));
         }
     }
 
