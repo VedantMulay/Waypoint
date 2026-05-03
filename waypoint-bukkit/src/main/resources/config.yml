@@ -14,3 +14,28 @@ database:
   verify-certificate: true
   pool-size: 10
   max-lifetime: 1800
+
+# Messages
+# Use %prefix% to include the prefix in a message.
+# Supports standard Bukkit color codes (&a, &c, etc.)
+messages:
+  prefix: "&8[&6Waypoint&8] &r"
+  waypoint-created: "%prefix%&aWaypoint &f%name% &acreated!"
+  waypoint-deleted: "%prefix%&aWaypoint &f%name% &adeleted!"
+  waypoint-started: "%prefix%&aNavigating to &f%name%&a."
+  waypoint-stopped: "%prefix%&aWaypoint navigation stopped."
+  waypoint-reached: "%prefix%&aYou have reached &f%name%&a!"
+  waypoint-not-found: "%prefix%&cWaypoint &f%id% &cnot found!"
+  no-active-waypoint: "%prefix%&cYou do not have an active waypoint."
+  fill-all-information: "%prefix%&cPlease fill in all required information before saving."
+  name-required: "%prefix%&cPlease set a waypoint name first."
+  location-required: "%prefix%&cPlease set a waypoint location first."
+  invalid-coordinates: "%prefix%&cInvalid coordinates! Please enter numbers."
+  player-not-found: "%prefix%&cPlayer &f%player% &cnot found!"
+  global-waypoint-exists: "%prefix%&cA global waypoint with ID &f%id% &calready exists!"
+  global-waypoint-created: "%prefix%&aGlobal waypoint &f%name% &7(&f%id%&7) &acreated at your location!"
+  global-waypoint-deleted: "%prefix%&aGlobal waypoint &f%id% &adeleted!"
+  global-waypoint-not-found: "%prefix%&cGlobal waypoint &f%id% &cnot found!"
+  waypoints-reloaded: "%prefix%&aWaypoints reloaded successfully!"
+  waypoint-started-for: "%prefix%&aWaypoint started for &f%player%&a."
+  no-global-waypoints: "%prefix%&7No global waypoints have been created yet."

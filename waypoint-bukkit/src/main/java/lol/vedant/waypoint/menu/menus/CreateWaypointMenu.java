@@ -7,6 +7,7 @@ import lol.vedant.waypoint.api.item.ItemBuilder;
 import lol.vedant.waypoint.menu.ChatInputManager;
 import lol.vedant.waypoint.menu.Menu;
 import lol.vedant.waypoint.menu.MenuItem;
+import lol.vedant.waypoint.util.Messages;
 import lol.vedant.waypoint.util.Util;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
 import org.bukkit.Location;
@@ -64,23 +65,20 @@ public class CreateWaypointMenu extends Menu {
                     (player, clickType) -> {
                         this.location = player.getLocation();
                         XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
+                        open(player);
                     }
             ));
         } else {
             setItem(14, new MenuItem(
-                    new ItemBuilder(XMaterial.RED_WOOL.get())
-                            .name(Util.cc("&aSet waypoint name"))
+                    new ItemBuilder(XMaterial.GREEN_WOOL.get())
+                            .name(Util.cc("&aWaypoint location"))
                             .addLore(Util.cc("&eLocation: &f" + Util.fromLocation(location)))
-                            .addLore(Util.cc("&eClick to set your current location"))
+                            .addLore(Util.cc("&eClick to update to your current location"))
                             .build(),
                     (player, clickType) -> {
-                        ChatInputManager.waitForInput(player, res -> {
-                            player.closeInventory();
-                            this.location = player.getLocation();
-                            open(player);
-                            XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
-                        });
-
+                        this.location = player.getLocation();
+                        XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
+                        open(player);
                     }
             ));
         }
@@ -91,21 +89,21 @@ public class CreateWaypointMenu extends Menu {
                         .build(),
                 (player, clickType) -> {
                     if(clickType.isLeftClick()) {
+                        if (name == null || name.isEmpty()) {
+                            player.sendMessage(Messages.get("name-required"));
+                            return;
+                        }
+                        if (location == null) {
+                            player.sendMessage(Messages.get("location-required"));
+                            return;
+                        }
                         plugin.getDatabase().createPlayerWaypoint(player.getUniqueId(), new PlayerWaypoint(Util.slugify(name), name, location));
+                        player.sendMessage(Messages.get("waypoint-created", "%name%", name));
                         XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(player);
                         player.closeInventory();
                     }
                 }
         ));
-
-        //setCloseAction(p -> {
-        //    if(name != null && location != null) {
-        //        plugin.getDatabase().createPlayerWaypoint(p.getUniqueId(), new PlayerWaypoint(Util.slugify(name), name, location));
-        //    } else {
-        //        p.sendMessage(Util.cc("&cYou did not fill all information. Creation cancelled."));
-        //    }
-        //});
-
 
     }
 

@@ -91,7 +91,10 @@ public class PlayerWaypoint implements PWaypoint {
         hologram = new Hologram(
                 "waypoint_" + player.getUniqueId(),
                 location,
-                Util.cc(Arrays.asList(name, "&cRemaining Blocks: &f" + Math.round(player.getLocation().distance(location)))),
+                Util.cc(Arrays.asList(
+                        "&6✦ &e" + name + " &6✦",
+                        "&7⬛ &cDistance: &f" + Math.round(player.getLocation().distance(location)) + " &7blocks"
+                )),
                 0
         );
 
@@ -129,7 +132,10 @@ public class PlayerWaypoint implements PWaypoint {
                         return;
                     }
 
-                    hologram.getDisplay().setText(String.join("\n", Util.cc(Arrays.asList(name + yIndicator, "&cRemaining Blocks: &f" + Math.round(player.getLocation().distance(location))))));
+                    hologram.getDisplay().setText(String.join("\n", Util.cc(Arrays.asList(
+                            "&6✦ &e" + name + yIndicator + " &6✦",
+                            "&7⬛ &cDistance: &f" + Math.round(player.getLocation().distance(location)) + " &7blocks"
+                    ))));
                     hologramManager.updateHologramText(player, hologram);
 
                     Location newLoc = getHologramLocation();
