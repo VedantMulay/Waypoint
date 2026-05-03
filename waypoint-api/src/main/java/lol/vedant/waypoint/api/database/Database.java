@@ -18,6 +18,8 @@ public interface Database {
 
     void deletePlayerWaypoint(UUID player, String identifier);
 
+    List<PWaypoint> getAllWaypoints();
+
     PWaypoint getWaypoint(String identifier);
 
     void createWaypoint(PWaypoint waypoint);

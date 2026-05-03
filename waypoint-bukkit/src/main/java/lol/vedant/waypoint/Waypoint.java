@@ -6,6 +6,7 @@ import lol.vedant.waypoint.api.database.DatabaseSettings;
 import lol.vedant.waypoint.api.hologram.HologramManager;
 import lol.vedant.waypoint.api.waypoint.PWaypointManager;
 import lol.vedant.waypoint.command.WaypointCommand;
+import lol.vedant.waypoint.command.admin.WaypointCreateCommand;
 import lol.vedant.waypoint.config.ConfigManager;
 import lol.vedant.waypoint.database.MySQL;
 import lol.vedant.waypoint.database.SQLite;
@@ -71,6 +72,7 @@ public final class Waypoint extends JavaPlugin implements WaypointAPI {
 
         commandFramework = new CommandFramework(this);
         commandFramework.registerCommands(new WaypointCommand());
+        commandFramework.registerCommands(new WaypointCreateCommand());
 
         getServer().getPluginManager().registerEvents(new WaypointListener(), this);
         getServer().getPluginManager().registerEvents(new MenuListener(), this);

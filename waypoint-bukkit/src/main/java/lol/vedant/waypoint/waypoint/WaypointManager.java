@@ -96,7 +96,20 @@ public class WaypointManager implements PWaypointManager {
 
     @Override
     public void stopWaypoint(Player player) {
-        activeWaypoints.get(player.getUniqueId()).stop();
-        activeWaypoints.remove(player.getUniqueId());
+        PWaypoint wp = activeWaypoints.get(player.getUniqueId());
+        if (wp != null) {
+            wp.stop();
+            activeWaypoints.remove(player.getUniqueId());
+        }
+    }
+
+    @Override
+    public boolean hasActiveWaypoint(Player player) {
+        return activeWaypoints.containsKey(player.getUniqueId());
+    }
+
+    @Override
+    public PWaypoint getActiveWaypoint(Player player) {
+        return activeWaypoints.get(player.getUniqueId());
     }
 }

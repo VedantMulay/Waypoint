@@ -4,3 +4,28 @@ main: lol.vedant.waypoint.Waypoint
 api-version: '1.19'
 depend:
   - ProtocolLib
+commands:
+  waypoint:
+    description: Personal waypoint commands
+    usage: /<command> [subcommand] [args]
+    aliases: [wp]
+  waypoints:
+    description: Open your personal waypoints menu
+    usage: /<command>
+  waypoint-admin:
+    description: Admin waypoint commands
+    usage: /<command> [subcommand] [args]
+    aliases: [wpa]
+permissions:
+  waypoints.use:
+    description: Use personal waypoint commands
+    default: true
+  waypoints.admin:
+    description: Admin controls for global waypoints
+    default: op
+  waypoint.admin.create:
+    description: Create global waypoints
+    default: op
+  waypoint.admin.delete:
+    description: Delete global waypoints
+    default: op
