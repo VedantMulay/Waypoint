@@ -8,8 +8,6 @@ import lol.vedant.waypoint.api.database.SQLiteUtils;
 import lol.vedant.waypoint.api.waypoint.PWaypoint;
 import lol.vedant.waypoint.util.Util;
 import lol.vedant.waypoint.waypoint.PlayerWaypoint;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -59,13 +57,11 @@ public class SQLite implements Database {
     @Override
     public PWaypoint getPlayerWaypoint(UUID player, String identifier) {
         String sql = "SELECT * FROM player_waypoints WHERE identifier=? AND uuid=?";
-        Player p = (Player) Bukkit.getOfflinePlayer(player);
-        utils.query(sql, rs -> {
+        return utils.query(sql, rs -> {
             try {
                 if(rs.next()) {
                     return new PlayerWaypoint(
                             rs.getString("identifier"),
-                            p,
                             rs.getString("name"),
                             Util.fromString(rs.getString("location"))
                     );
@@ -74,8 +70,7 @@ public class SQLite implements Database {
                 e.printStackTrace();
             }
             return null;
-        }, identifier);
-        return null;
+        }, identifier, player.toString());
     }
 
     @Override
@@ -113,9 +108,31 @@ public class SQLite implements Database {
     }
 
     @Override
+    public List<PWaypoint> getAllWaypoints() {
+        String sql = "SELECT * FROM global_waypoints";
+        List<PWaypoint> waypoints = new ArrayList<>();
+        utils.query(sql, rs -> {
+            try {
+                while (rs.next()) {
+                    PlayerWaypoint wp = new PlayerWaypoint(
+                            rs.getString("identifier"),
+                            rs.getString("name"),
+                            Util.fromString(rs.getString("location"))
+                    );
+                    waypoints.add(wp);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return waypoints;
+        });
+        return waypoints;
+    }
+
+    @Override
     public PWaypoint getWaypoint(String identifier) {
         String sql = "SELECT * FROM global_waypoints WHERE identifier=?";
-        utils.query(sql, rs -> {
+        return utils.query(sql, rs -> {
             try {
                 if(rs.next()) {
                     return new PlayerWaypoint(
@@ -129,8 +146,6 @@ public class SQLite implements Database {
             }
             return null;
         }, identifier);
-
-        return null;
     }
 
 

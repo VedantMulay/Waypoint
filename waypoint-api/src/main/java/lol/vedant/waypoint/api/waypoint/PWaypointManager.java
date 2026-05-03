@@ -16,7 +16,9 @@ public interface PWaypointManager {
 
     void stopWaypoint(Player player);
 
+    boolean hasActiveWaypoint(Player player);
 
+    PWaypoint getActiveWaypoint(Player player);
 
 
 

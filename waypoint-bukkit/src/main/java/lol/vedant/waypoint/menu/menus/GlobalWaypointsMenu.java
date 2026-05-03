@@ -11,13 +11,13 @@ import lol.vedant.waypoint.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaypointsMenu extends Menu {
+public class GlobalWaypointsMenu extends Menu {
 
     private static final int ITEMS_PER_PAGE = 27;
 
     Waypoint plugin = Waypoint.getInstance();
 
-    public WaypointsMenu(List<PWaypoint> waypoints, int page) {
+    public GlobalWaypointsMenu(List<PWaypoint> waypoints, int page) {
         super(buildTitle(waypoints.size(), page), 4);
 
         int totalPages = Math.max(1, (int) Math.ceil((double) waypoints.size() / ITEMS_PER_PAGE));
@@ -27,19 +27,22 @@ public class WaypointsMenu extends Menu {
 
         for (int i = 0; i < pageWaypoints.size(); i++) {
             PWaypoint wp = pageWaypoints.get(i);
-            int finalPage = page;
             setItem(i, new MenuItem(
-                    new ItemBuilder(XMaterial.COMPASS.get())
-                            .name(Util.cc("&a" + wp.getName()))
-                            .lore(buildWaypointLore(wp))
+                    new ItemBuilder(XMaterial.NETHER_STAR.get())
+                            .name(Util.cc("&b" + wp.getName()))
+                            .lore(buildLore(wp))
                             .build(),
                     (player, clickType) -> {
                         if (clickType.isLeftClick()) {
                             wp.setPlayer(player);
                             plugin.getWaypointManager().startWaypoint(player, wp);
                             player.closeInventory();
-                        } else if (clickType.isRightClick()) {
-                            new EditWaypointMenu(wp, waypoints, finalPage).open(player);
+                        } else if (clickType.isRightClick() && player.hasPermission("waypoints.admin")) {
+                            plugin.getDatabase().deleteWaypoint(wp.getIdentifier());
+                            player.sendMessage(Util.cc("&cGlobal waypoint &f" + wp.getName() + " &cdeleted!"));
+                            List<PWaypoint> updated = plugin.getDatabase().getAllWaypoints();
+                            int targetPage = Math.min(page, Math.max(0, (int) Math.ceil((double) updated.size() / ITEMS_PER_PAGE) - 1));
+                            new GlobalWaypointsMenu(updated, targetPage).open(player);
                         }
                     }
             ));
@@ -51,7 +54,7 @@ public class WaypointsMenu extends Menu {
                     new ItemBuilder(XMaterial.ARROW.get())
                             .name(Util.cc("&ePrevious Page"))
                             .build(),
-                    (player, clickType) -> new WaypointsMenu(waypoints, page - 1).open(player)
+                    (player, clickType) -> new GlobalWaypointsMenu(waypoints, page - 1).open(player)
             ));
         } else {
             setItem(27, new MenuItem(
@@ -61,40 +64,15 @@ public class WaypointsMenu extends Menu {
             ));
         }
 
-        // Global waypoints button
-        setItem(29, new MenuItem(
-                new ItemBuilder(XMaterial.NETHER_STAR.get())
-                        .name(Util.cc("&bGlobal Waypoints"))
-                        .lore(Util.cc("&7View global waypoints"))
-                        .build(),
-                (player, clickType) -> {
-                    List<PWaypoint> global = plugin.getDatabase().getAllWaypoints();
-                    new GlobalWaypointsMenu(global, 0).open(player);
-                }
-        ));
-
-        // Create new waypoint button
+        // Back to personal waypoints
         setItem(31, new MenuItem(
-                new ItemBuilder(XMaterial.LIME_CONCRETE.get())
-                        .name(Util.cc("&aCreate Waypoint"))
-                        .lore(Util.cc("&7Click to create a new personal waypoint"))
-                        .build(),
-                (player, clickType) -> new CreateWaypointMenu("Create Waypoint", 3).open(player)
-        ));
-
-        // Stop active waypoint button
-        setItem(33, new MenuItem(
-                new ItemBuilder(XMaterial.BARRIER.get())
-                        .name(Util.cc("&cStop Active Waypoint"))
-                        .lore(Util.cc("&7Click to stop your current navigation"))
+                new ItemBuilder(XMaterial.COMPASS.get())
+                        .name(Util.cc("&aPersonal Waypoints"))
+                        .lore(Util.cc("&7Click to view your personal waypoints"))
                         .build(),
                 (player, clickType) -> {
-                    if (plugin.getWaypointManager().hasActiveWaypoint(player)) {
-                        plugin.getWaypointManager().stopWaypoint(player);
-                        player.sendMessage(Util.cc("&cYour active waypoint has been stopped."));
-                    } else {
-                        player.sendMessage(Util.cc("&cYou don't have an active waypoint."));
-                    }
+                    List<PWaypoint> personal = plugin.getDatabase().getAllPlayerWaypoints(player.getUniqueId());
+                    new WaypointsMenu(personal, 0).open(player);
                 }
         ));
 
@@ -103,7 +81,7 @@ public class WaypointsMenu extends Menu {
                     new ItemBuilder(XMaterial.ARROW.get())
                             .name(Util.cc("&eNext Page"))
                             .build(),
-                    (player, clickType) -> new WaypointsMenu(waypoints, page + 1).open(player)
+                    (player, clickType) -> new GlobalWaypointsMenu(waypoints, page + 1).open(player)
             ));
         } else {
             setItem(35, new MenuItem(
@@ -116,17 +94,16 @@ public class WaypointsMenu extends Menu {
 
     private static String buildTitle(int total, int page) {
         int totalPages = Math.max(1, (int) Math.ceil((double) total / ITEMS_PER_PAGE));
-        return Util.cc("&6Your Waypoints &7(" + (page + 1) + "/" + totalPages + ")");
+        return Util.cc("&bGlobal Waypoints &7(" + (page + 1) + "/" + totalPages + ")");
     }
 
-    private List<String> buildWaypointLore(PWaypoint wp) {
+    private List<String> buildLore(PWaypoint wp) {
         List<String> lore = new ArrayList<>();
         if (wp.getLocation() != null && wp.getLocation().getWorld() != null) {
             lore.add(Util.cc("&7Location: &f" + Util.fromLocation(wp.getLocation())));
         }
         lore.add(Util.cc("&7Left-click: &aNavigate"));
-        lore.add(Util.cc("&7Right-click: &eEdit / Delete"));
+        lore.add(Util.cc("&7Right-click: &cDelete &7(admin only)"));
         return lore;
     }
 }
-
